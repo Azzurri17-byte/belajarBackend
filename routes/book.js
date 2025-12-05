@@ -1,21 +1,22 @@
 const express = require('express')
 const router = express.Router()
+const bodyParser = require('body-parser')
 const db = require('../connection')
 const response = require('../response')
 const verifyToken = require('../middleware/authMiddleware')
-const bodyParser = require('body-parser')
 
 router.use(bodyParser.json())
 
-router.get('/', verifyToken(['admin', 'user']), (req, res) => {
+router.get('/', verifyToken(["admin", "user"]), (req, res) => {
     const sql = 'SELECT * FROM book_db'
     db.query(sql, (err, result) => {
         if (err) {
             return response(500, 'SERVER ERROR', '-', res)
         }
-        return response(200, 'List buku', result, res)
+        return response(200, 'Book List', result, res)
     })
 })
+
 
 router.get('/:title', verifyToken(['admin', 'user']), (req, res) => {
     const title = req.params.title
