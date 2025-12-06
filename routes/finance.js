@@ -3,7 +3,6 @@ const app = express()
 const bodyParser = require('body-parser')
 const db = require('../connection')
 const path = require('path')
-const { error } = require('console')
 
 app.use(bodyParser.json())
 app.set('view engine', 'ejs')

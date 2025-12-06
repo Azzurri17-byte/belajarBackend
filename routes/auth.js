@@ -7,18 +7,30 @@ const db = require('../connection')
 const response = require('../response')
 const secretkey = process.env.SECRET_KEY
 
+router.use(express.urlencoded({ extended: true }))
+
+router.get('/register', (req, res) => {
+    res.render("register", {success: req.query.success, error: req.query.error})
+})
+
+router.get('/login', (req, res) => {
+    res.render("login", {success: req.query.success, error: req.query.error})
+})
+
 router.post('/register', async (req, res) => {
     const {username, password} = req.body
     const role = req.body.role || "user"
 
     if (!username || !password) {
-        return response(400, 'username & password harus diisi')
+        return res.redirect('/auth/register?error=Username & password tidak boleh kosong')
     }
     db.query('SELECT * FROM users_1 WHERE username = ?', [username], (err, result) => {
         if (err) {
-            return response(500, 'SERVER ERROR', '-', res)
+        return response(500, 'SERVER ERROR', '-', res)
+        } 
+        if (result.length > 0) {
+        return res.redirect('/auth/register?error=Username sudah terdaftar')
         }
-        return response(409, 'username sudah terdaftar coba lagi', result[0].username, res)
         })
     const hashedPassword = await bcrypt.hash(password, 10)
     const sql = 'INSERT INTO users_1 (username, password, role) VALUES (?, ?, ?)'
@@ -26,34 +38,41 @@ router.post('/register', async (req, res) => {
         if (err) {
             return response(500, 'SERVER ERROR', '-', res)
         }
-        return response(201, 'Login berhasil', result.insertId, res)
+        // return response(201, 'Register Berhasil', result.insertId, res)
+        return res.redirect('/auth/login?success=Register berhasil silahkan login')
     })
 })
 
 router.post('/login', (req, res) => {
     const {username, password} = req.body
     if (!username || !password) {
-        return response(400, 'username & password harus diisi')
+        return res.render('login', {error: "Username & Password wajib diisi"})
     }
     const sql = 'SELECT * FROM users_1 WHERE username = ?'
     db.query(sql, [username], async (err, result) => {
         if (err) {
-            return response(500, "SERVER ERROR", '-', res)
+            return res.render('login', {error: "Server error"})
         }
         if (result.length === 0) {
-            return response(404, 'username tidak ditemukan', '-', res)
+            return res.render('login', {error: "Username tidak ditemukan"})
         }
         const user = result[0]
         const passwordMatch = bcrypt.compare(password, user.password)
         if (!passwordMatch) {
-            return response(404, 'password salah', '-', res)
+            return res.render('login', {error: "Password salah"})
         }
         const token = jwt.sign({
             id: user.id,
             username: user.username,
             role: user.role, 
         }, secretkey, {expiresIn: "1h"})
-        return response(200, 'Login berhasil', {token}, res)
+        //proses menyimpan jwt ke cookie website secara otmatis
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 60 * 60 * 1000 //durasi menjadi 1 jam
+        })
+        return res.redirect('/book')
     })
 })
 
