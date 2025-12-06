@@ -15,9 +15,10 @@
     <a href="/auth/register">
     Belum memiliki akun?
     </a>
-    <% if (success) { %>
+    <% if (typeof success !== "undefined") { %>
      <script>alert("<%= success %>")</script>
     <% } %>
+
      <% if (typeof error !== "undefined") { %>
       <script>
         alert("<%= error %>")
