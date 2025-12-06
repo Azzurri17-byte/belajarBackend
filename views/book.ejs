@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>List Buku</h1>
+    <h3>selamat datang <%= user.username %></h3>
+    <table border="1" cellpadding = "8">
+        <tr>
+            <th>title</th>
+            <th>author</th>
+        </tr>
+    <% list.forEach(book => { %>
+        <tr>
+            <td> <%= book.title %> </td>
+            <td> <%= book.author %> </td>
+        </tr>
+    <% }) %>
+    </table>
+    <a href="/auth/login">Logout</a>
+</body>
+</html>
