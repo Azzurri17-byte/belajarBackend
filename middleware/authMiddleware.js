@@ -16,7 +16,7 @@ const verifyToken = (roles = []) => {
 
     if (!token) {
         //kalau request dari browser ambil pakai redirect
-        if (req.originalUrl.startWith("/auth")) {
+        if (req.originalUrl.startsWith("/auth")) {
             return res.redirect('/auth/login')
         }
         //kalau request via postman kirim ini
