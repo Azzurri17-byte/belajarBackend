@@ -8,4 +8,5 @@ const response = (statusCode, message, data, res) => {
     })
 }
 
+
 module.exports = response
