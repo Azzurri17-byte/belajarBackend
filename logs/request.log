@@ -1,0 +1,20 @@
+[12/6/2025, 4:00:29 PM] GET /book/admin
+[12/6/2025, 4:01:03 PM] POST /book/admin
+[12/6/2025, 4:01:12 PM] GET /book/admin
+[12/6/2025, 4:01:19 PM] GET /book
+[12/6/2025, 4:07:04 PM] GET /admin (61ms)
+[12/6/2025, 4:08:40 PM] GET / (11ms)
+[12/6/2025, 4:08:57 PM] GET /login (3ms)
+[12/6/2025, 4:09:02 PM] GET /login (3ms)
+[12/6/2025, 4:10:12 PM] POST /auth/login (8ms)
+[12/6/2025, 4:12:47 PM] POST /login (4ms)
+[12/6/2025, 4:12:59 PM] GET /register (2ms)
+[12/6/2025, 4:13:07 PM] POST /register (89ms)
+[12/6/2025, 4:13:07 PM] GET /login?success=Register%20berhasil%20silahkan%20login (1ms)
+[12/6/2025, 4:13:24 PM] POST /login (5ms)
+[12/6/2025, 4:13:24 PM] GET / (5ms)
+[12/6/2025, 4:16:26 PM] GET / (10ms)
+[12/6/2025, 4:16:40 PM] GET /login (1ms)
+[12/6/2025, 4:16:48 PM] POST /login (2ms)
+[12/6/2025, 4:16:52 PM] POST /login (1ms)
+[12/6/2025, 4:17:13 PM] POST /login (2ms)
