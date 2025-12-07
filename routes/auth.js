@@ -57,7 +57,7 @@ router.post('/login', (req, res) => {
             return res.render('login', {error: "Username tidak ditemukan"})
         }
         const user = result[0]
-        const passwordMatch = bcrypt.compare(password, user.password)
+        const passwordMatch = await bcrypt.compare(password, user.password)
         if (!passwordMatch) {
             return res.render('login', {error: "Password salah"})
         }
