@@ -29,19 +29,19 @@ router.get('/admin', verifyToken(["admin"]), (req, res) => {
 })
 
 
-// router.get('/:title', verifyToken(['admin', 'user']), (req, res) => {
-//     const title = req.params.title
-//     const sql = 'SELECT * FROM book_db WHERE title LIKE ?'
-//     db.query(sql, [`%${title}%`], (err, result) => {
-//         if (err) {
-//             return response(500, 'SERVER ERROR', '-', res)
-//         }
-//         if (result.length === 0) {
-//             return response(404, 'Buku belum ada di list', '-', res)
-//         }
-//         return response(200, 'List buku', result, res)
-//     })
-// })
+router.get('/:title', verifyToken(['admin', 'user']), (req, res) => {
+    const title = req.params.title
+    const sql = 'SELECT * FROM book_db WHERE title LIKE ?'
+    db.query(sql, [`%${title}%`], (err, result) => {
+        if (err) {
+            return response(500, 'SERVER ERROR', '-', res)
+        }
+        if (result.length === 0) {
+            return res.render('book', {list: result, message: "judul tidak ditemukan"})
+        }
+        return res.render('book', {list: result, user: req.user})
+    })
+})
 
 // router.get('/author/:author', verifyToken(['admin', 'user']), (req, res) => {
 //     const author = req.params.author
