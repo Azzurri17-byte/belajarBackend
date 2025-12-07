@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <h1>Register</h1>
     <form action="/auth/register" method="post">
         <input type="text" placeholder="username" name="username">
         <input type="password" placeholder="password" name="password">
-        <button type="submit">Sign Up</button>
+        <input class="btn btn-primary p-1" type="submit" value="Submit">
     </form>
     <% if (error) { %>
      <script>alert("<%= error %>")</script>
@@ -18,5 +19,6 @@
      <% if (success) { %>
      <script>alert("<%= success %>")</script>
     <% } %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
