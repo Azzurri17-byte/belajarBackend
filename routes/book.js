@@ -13,20 +13,10 @@ router.get('/', verifyToken(["admin", "user"]), (req, res) => {
         if (err) {
             return response(500, 'SERVER ERROR', '-', res)
         }
-        return res.render('book', {list: result, user: req.user})
+        return response(200, "List buku", result, res)
     })
 })
 
-//route get khusus admin
-router.get('/admin', verifyToken(["admin"]), (req, res) => {
-    const sql = 'SELECT * FROM book_db'
-    db.query(sql, (err, result) => {
-        if (err) {
-            return response(500, 'SERVER ERROR', '-', res)
-        }
-        return response(200, 'List buku', result, res)
-    })
-})
 
 
 router.get('/:title', verifyToken(['admin', 'user']), (req, res) => {
@@ -43,21 +33,21 @@ router.get('/:title', verifyToken(['admin', 'user']), (req, res) => {
     })
 })
 
-// router.get('/author/:author', verifyToken(['admin', 'user']), (req, res) => {
-//     const author = req.params.author
-//     const sql = 'SELECT * FROM book_db WHERE author LIKE ?'
-//     db.query(sql, [`%${author}%`], (err, result) => {
-//         if (err) {
-//             return response(500, 'SERVER ERROR', '-', res)
-//         }
-//         if (result.length === 0) {
-//             return response(404, 'Author tidak ditemukan', '-', res)
-//         }
-//         return response(200, 'List buku', result, res)
-//     })
-// })
+router.get('/:author', verifyToken(['admin', 'user']), (req, res) => {
+    const author = req.params.author
+    const sql = 'SELECT * FROM book_db WHERE author LIKE ?'
+    db.query(sql, [`%${author}%`], (err, result) => {
+        if (err) {
+            return response(500, 'SERVER ERROR', '-', res)
+        }
+        if (result.length === 0) {
+            return response(404, 'Author tidak ditemukan', '-', res)
+        }
+        return response(200, 'List buku', result, res)
+    })
+})
 
-router.post('/admin', verifyToken(["admin"]), (req, res) => {
+router.post('/', verifyToken(["admin"]), (req, res) => {
     const {title, author} = req.body
     const sql = 'INSERT INTO book_db (title, author) VALUES (?, ?)'
     db.query(sql, [title, author], (err, result) => {
@@ -68,7 +58,7 @@ router.post('/admin', verifyToken(["admin"]), (req, res) => {
     })
 })
 
-router.put('/admin/:id', verifyToken(["admin"]), (req, res) => {
+router.put('/:id', verifyToken(["admin"]), (req, res) => {
     const {title, author} = req.body
     const id = req.params.id
     const sql = 'UPDATE book_db SET title = ?, author = ? WHERE id = ?'
@@ -83,7 +73,7 @@ router.put('/admin/:id', verifyToken(["admin"]), (req, res) => {
     })
 })
 
-router.delete('/admin/:id', verifyToken(["admin"]), (req, res) => {
+router.delete('/:id', verifyToken(["admin"]), (req, res) => {
     const id = req.params.id
     const sql = 'DELETE FROM book_db WHERE id = ?'
     db.query(sql, [id], (err, result) => {
