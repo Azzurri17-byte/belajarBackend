@@ -7,29 +7,19 @@ const db = require('../connection')
 const response = require('../response')
 const secretkey = process.env.SECRET_KEY
 
-router.use(express.urlencoded({ extended: true }))
-
-router.get('/register', (req, res) => {
-    res.render("register", {success: req.query.success, error: req.query.error})
-})
-
-router.get('/login', (req, res) => {
-    res.render("login", {success: req.query.success, error: req.query.error})
-})
 
 router.post('/register', async (req, res) => {
     const {username, password} = req.body
     const role = req.body.role || "user"
-
     if (!username || !password) {
-        return res.redirect('/auth/register?error=Username & password tidak boleh kosong')
+        return response(401, "username & password wajib diisi", null, res)
     }
     db.query('SELECT * FROM users_1 WHERE username = ?', [username], (err, result) => {
         if (err) {
-        return response(500, 'SERVER ERROR', '-', res)
+        return response(500, 'SERVER ERROR', null, res)
         } 
         if (result.length > 0) {
-        return res.redirect('/auth/register?error=Username sudah terdaftar')
+        return response(401, "username sudah terdaftar", null, res)
         }
         })
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -38,23 +28,22 @@ router.post('/register', async (req, res) => {
         if (err) {
             return response(500, 'SERVER ERROR', '-', res)
         }
-        // return response(201, 'Register Berhasil', result.insertId, res)
-        return res.redirect('/auth/login?success=Register berhasil silahkan login')
+        return response(201, 'Register Berhasil', result.insertId, res)
     })
 })
 
 router.post('/login', (req, res) => {
     const {username, password} = req.body
     if (!username || !password) {
-        return res.render('login', {error: "Username & Password wajib diisi"})
+        return response(401, "username & Password wajib diisi", null, res)
     }
     const sql = 'SELECT * FROM users_1 WHERE username = ?'
     db.query(sql, [username], async (err, result) => {
         if (err) {
-            return res.render('login', {error: "Server error"})
+            return response(500, "SERVER ERROR", null, res)
         }
         if (result.length === 0) {
-            return res.render('login', {error: "Username tidak ditemukan"})
+            return response(404, "username tidak ditemukan", null, res)
         }
         const user = result[0]
         const passwordMatch = await bcrypt.compare(password, user.password)
@@ -66,13 +55,7 @@ router.post('/login', (req, res) => {
             username: user.username,
             role: user.role, 
         }, secretkey, {expiresIn: "1h"})
-        //proses menyimpan jwt ke cookie website secara otmatis
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            maxAge: 60 * 60 * 1000 //durasi menjadi 1 jam
-        })
-        return res.redirect('/book')
+        return response(200, "Login berhasil", {token}, res)
     })
 })
 
