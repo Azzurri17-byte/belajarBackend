@@ -5,34 +5,21 @@ const secretkey = process.env.SECRET_KEY
 
 const verifyToken = (roles = []) => {
     return (req, res, next) => {
-        //token dari cookie web
-        let token = req.cookies.token
-        
-    //kalau gaada token di cookie web, coba ambil di postman    
-    if (!token && req.headers.authorization) {
-        const authHeader = req.headers.authorization
-        token = authHeader.split(" ")[1]
-    }
-
-    if (!token) {
-        //kalau request dari browser ambil pakai redirect
-        if (req.originalUrl.startsWith("/auth")) {
-            return res.redirect('/auth/login')
+        const authHeaders = req.headers.authorization
+        if (!authHeaders) {
+            return response(404, "token tidak ditemukan", null, res)
         }
-        //kalau request via postman kirim ini
-        return response(404, 'token tidak ditemukan', '-', res)
-    }
-
-    try {
-          const decoded = jwt.verify(token, secretkey)
-            if(roles.length > 0 && !roles.includes(decoded.role)) {
-                return response(403, 'Akses ditolak!!', '-', res)
+        const token = authHeaders.split(" ")[1]
+        jwt.verify(token, secretkey, (err, decode) => {
+            if (err) {
+                return response(404, "Token invalid/expired", null, res)
             }
-            req.user = decoded
+            if (roles.length && !roles.includes(decode.role)) {
+                return response(401, "akses ditolak", null, res)
+            }
+            req.role = decode
             next()
-        } catch {
-            return response(401, "token invalid/expired", '-', res)
-        }
+        })
     }
 }
 
